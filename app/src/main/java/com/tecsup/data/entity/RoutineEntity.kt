@@ -1,11 +1,10 @@
 package com.tecsup.data.entity
 
-import androidx.room3.ColumnInfo
-import androidx.room3.Entity
-import androidx.room3.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity
-
 data class Rutina(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "usuario_id") val usuarioId: Int,
