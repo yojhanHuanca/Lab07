@@ -16,10 +16,10 @@ interface RutinaDao {
     suspend fun insertar(rutina: Rutina): Long
 
     @Update
-    suspend fun actualizar(rutina: Rutina)
+    suspend fun actualizar(rutina: Rutina): Int
 
     @Delete
-    suspend fun eliminar(rutina: Rutina)
+    suspend fun eliminar(rutina: Rutina): Int
 
     @Query("SELECT * FROM Rutina WHERE usuario_id = :usuarioId ORDER BY fecha DESC")
     suspend fun listarPorUsuario(usuarioId: Int): List<Rutina>
