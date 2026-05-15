@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.tecsup.viewmodel.UsuarioViewModel
 import kotlinx.coroutines.launch
 
@@ -22,42 +23,69 @@ fun HomePage(
     onIrPerfil: () -> Unit,
     onCerrarSesion: () -> Unit
 ) {
+
     val usuario by viewModel.usuario.collectAsState()
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
+
+    val drawerState = rememberDrawerState(
+        DrawerValue.Closed
+    )
+
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(usuarioId) {
+
         viewModel.cargarUsuario(usuarioId)
     }
 
     ModalNavigationDrawer(
+
         drawerState = drawerState,
+
         drawerContent = {
+
             ModalDrawerSheet {
+
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Header del drawer
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+
+                    horizontalAlignment =
+                        Alignment.CenterHorizontally
                 ) {
-                    // Avatar con iniciales
+
                     Surface(
                         modifier = Modifier.size(64.dp),
                         shape = CircleShape,
-                        color = MaterialTheme.colorScheme.primaryContainer
+                        color =
+                            MaterialTheme.colorScheme
+                                .primaryContainer
                     ) {
-                        Box(contentAlignment = Alignment.Center) {
+
+                        Box(
+                            contentAlignment = Alignment.Center
+                        ) {
+
                             Text(
-                                text = usuario?.nombreCompleto
-                                    ?.split(" ")
-                                    ?.take(2)
-                                    ?.joinToString("") { it.first().uppercase() }
-                                    ?: "GY",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                                text =
+                                    usuario?.nombreCompleto
+                                        ?.split(" ")
+                                        ?.take(2)
+                                        ?.joinToString("") {
+                                            it.first().uppercase()
+                                        } ?: "GY",
+
+                                style =
+                                    MaterialTheme
+                                        .typography
+                                        .titleMedium,
+
+                                color =
+                                    MaterialTheme
+                                        .colorScheme
+                                        .onPrimaryContainer
                             )
                         }
                     }
@@ -66,115 +94,172 @@ fun HomePage(
 
                     Text(
                         text = usuario?.nombreCompleto ?: "",
-                        style = MaterialTheme.typography.titleSmall
+                        style =
+                            MaterialTheme.typography.titleSmall
                     )
+
                     Text(
                         text = usuario?.email ?: "",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        style =
+                            MaterialTheme.typography.bodySmall,
+
+                        color =
+                            MaterialTheme
+                                .colorScheme
+                                .onSurfaceVariant
                     )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider()
-                Spacer(modifier = Modifier.height(8.dp))
 
-                // Items del drawer
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                    label = { Text("Inicio") },
-                    selected = true,
-                    onClick = { scope.launch { drawerState.close() } }
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Add, contentDescription = null) },
-                    label = { Text("Agregar rutina") },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        onIrAgregar()
+                HorizontalDivider()
+
+                DrawerItem(
+                    icon = Icons.Default.Home,
+                    text = "Inicio",
+                    selected = true
+                ) {
+                    scope.launch {
+                        drawerState.close()
                     }
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.List, contentDescription = null) },
-                    label = { Text("Mis rutinas") },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        onIrLista()
+                }
+
+                DrawerItem(
+                    icon = Icons.Default.Add,
+                    text = "Agregar rutina"
+                ) {
+                    scope.launch {
+                        drawerState.close()
                     }
-                )
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                    label = { Text("Mi perfil") },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        onIrPerfil()
+
+                    onIrAgregar()
+                }
+
+                DrawerItem(
+                    icon = Icons.Default.List,
+                    text = "Mis rutinas"
+                ) {
+                    scope.launch {
+                        drawerState.close()
                     }
-                )
+
+                    onIrLista()
+                }
+
+                DrawerItem(
+                    icon = Icons.Default.Person,
+                    text = "Mi perfil"
+                ) {
+                    scope.launch {
+                        drawerState.close()
+                    }
+
+                    onIrPerfil()
+                }
 
                 Spacer(modifier = Modifier.weight(1f))
+
                 HorizontalDivider()
 
-                NavigationDrawerItem(
-                    icon = { Icon(Icons.Default.ExitToApp, contentDescription = null) },
-                    label = { Text("Cerrar sesión") },
-                    selected = false,
-                    onClick = onCerrarSesion,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+                DrawerItem(
+                    icon = Icons.Default.ExitToApp,
+                    text = "Cerrar sesión"
+                ) {
+                    onCerrarSesion()
+                }
             }
         }
+
     ) {
+
         Scaffold(
+
             topBar = {
+
                 TopAppBar(
-                    title = { Text("GymTracker Pro") },
+
+                    title = {
+                        Text("GymTracker Pro")
+                    },
+
                     navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Abrir menú")
+
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    drawerState.open()
+                                }
+                            }
+                        ) {
+
+                            Icon(
+                                Icons.Default.Menu,
+                                contentDescription = null
+                            )
                         }
                     },
+
                     actions = {
-                        IconButton(onClick = onIrPerfil) {
-                            Icon(Icons.Default.Person, contentDescription = "Perfil")
+
+                        IconButton(
+                            onClick = onIrPerfil
+                        ) {
+
+                            Icon(
+                                Icons.Default.Person,
+                                contentDescription = null
+                            )
                         }
                     }
                 )
             }
+
         ) { padding ->
+
             Column(
+
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(horizontal = 20.dp, vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                    .padding(20.dp),
+
+                verticalArrangement =
+                    Arrangement.spacedBy(16.dp)
+
             ) {
-                // Saludo
+
                 Text(
                     text = "Hola,",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    style =
+                        MaterialTheme.typography.bodyLarge,
+
+                    color =
+                        MaterialTheme
+                            .colorScheme
+                            .onSurfaceVariant
                 )
+
                 Text(
                     text = usuario?.nombreCompleto ?: "",
-                    style = MaterialTheme.typography.headlineSmall
+                    style =
+                        MaterialTheme.typography.headlineSmall
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Tarjetas de acceso rápido
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement =
+                        Arrangement.spacedBy(12.dp)
                 ) {
+
                     DashboardCard(
                         modifier = Modifier.weight(1f),
                         icon = Icons.Default.Add,
                         titulo = "Agregar\nrutina",
                         onClick = onIrAgregar
                     )
+
                     DashboardCard(
                         modifier = Modifier.weight(1f),
                         icon = Icons.Default.List,
@@ -182,16 +267,20 @@ fun HomePage(
                         onClick = onIrLista
                     )
                 }
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement =
+                        Arrangement.spacedBy(12.dp)
                 ) {
+
                     DashboardCard(
                         modifier = Modifier.weight(1f),
                         icon = Icons.Default.Person,
                         titulo = "Mi\nperfil",
                         onClick = onIrPerfil
                     )
+
                     DashboardCard(
                         modifier = Modifier.weight(1f),
                         icon = Icons.Default.ExitToApp,
@@ -205,37 +294,81 @@ fun HomePage(
 }
 
 @Composable
+private fun DrawerItem(
+    icon: ImageVector,
+    text: String,
+    selected: Boolean = false,
+    onClick: () -> Unit
+) {
+
+    NavigationDrawerItem(
+
+        icon = {
+            Icon(icon, contentDescription = null)
+        },
+
+        label = {
+            Text(text)
+        },
+
+        selected = selected,
+
+        onClick = onClick
+    )
+}
+
+@Composable
 private fun DashboardCard(
     modifier: Modifier = Modifier,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     titulo: String,
     onClick: () -> Unit
 ) {
+
     Card(
         onClick = onClick,
+
         modifier = modifier.height(110.dp),
+
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor =
+                MaterialTheme.colorScheme.primaryContainer
         )
     ) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+
+            verticalArrangement =
+                Arrangement.Center,
+
+            horizontalAlignment =
+                Alignment.CenterHorizontally
         ) {
+
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 modifier = Modifier.size(32.dp),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+
+                tint =
+                    MaterialTheme.colorScheme
+                        .onPrimaryContainer
             )
+
             Spacer(modifier = Modifier.height(8.dp))
+
             Text(
                 text = titulo,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
+
+                style =
+                    MaterialTheme.typography.labelLarge,
+
+                color =
+                    MaterialTheme.colorScheme
+                        .onPrimaryContainer
             )
         }
     }

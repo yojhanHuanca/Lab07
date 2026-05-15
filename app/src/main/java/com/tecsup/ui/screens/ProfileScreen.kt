@@ -5,10 +5,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,11 +18,12 @@ fun ProfileScreen(
     viewModel: UsuarioViewModel,
     onCerrarSesion: () -> Unit
 ) {
+
     val usuario by viewModel.usuario.collectAsState()
     val totalRutinas by viewModel.totalRutinas.collectAsState()
     val volumenTotal by viewModel.volumenTotal.collectAsState()
 
-    LaunchedEffect(usuarioId) {
+    LaunchedEffect(Unit) {
         viewModel.cargarUsuario(usuarioId)
         viewModel.cargarEstadisticas(usuarioId)
     }
@@ -36,134 +34,167 @@ fun ProfileScreen(
                 title = { Text("Mi Perfil") },
                 actions = {
                     IconButton(onClick = onCerrarSesion) {
-                        Icon(Icons.Default.ExitToApp, contentDescription = "Cerrar sesión")
+                        Icon(Icons.Default.ExitToApp, null)
                     }
                 }
             )
         }
     ) { padding ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
             // Avatar
             Surface(
-                modifier = Modifier.size(100.dp),
+                modifier = Modifier.size(90.dp),
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.primaryContainer
             ) {
+
                 Box(contentAlignment = Alignment.Center) {
+
                     Text(
                         text = usuario?.nombreCompleto
                             ?.split(" ")
                             ?.take(2)
-                            ?.joinToString("") { it.first().uppercase() }
-                            ?: "GY",
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                            ?.joinToString("") {
+                                it.first().uppercase()
+                            } ?: "GY",
+
+                        style = MaterialTheme.typography.headlineMedium
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
+            // Datos usuario
             Text(
-                text = usuario?.nombreCompleto ?: "Cargando...",
-                style = MaterialTheme.typography.headlineMedium
+                text = usuario?.nombreCompleto ?: "",
+                style = MaterialTheme.typography.headlineSmall
             )
+
             Text(
                 text = "@${usuario?.nombreUsuario ?: ""}",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.primary
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Información Personal
+            // Card información
             Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
+
                 Column(
                     modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    InfoRow(icon = Icons.Default.Email, label = "Email", value = usuario?.email ?: "")
-                    InfoRow(icon = Icons.Default.DateRange, label = "Edad", value = "${usuario?.edad ?: 0} años")
-                    InfoRow(icon = Icons.Default.Info, label = "Registrado el", value = usuario?.fechaRegistro ?: "")
+
+                    InfoItem(
+                        icon = Icons.Default.Email,
+                        text = usuario?.email ?: ""
+                    )
+
+                    InfoItem(
+                        icon = Icons.Default.Person,
+                        text = "${usuario?.edad ?: 0} años"
+                    )
+
+                    InfoItem(
+                        icon = Icons.Default.DateRange,
+                        text = usuario?.fechaRegistro ?: ""
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
             // Estadísticas
-            Text(
-                text = "Estadísticas Globales",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.align(Alignment.Start)
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
             ) {
+
                 StatCard(
                     modifier = Modifier.weight(1f),
-                    label = "Rutinas",
-                    value = totalRutinas.toString(),
-                    color = MaterialTheme.colorScheme.tertiaryContainer
+                    titulo = "Rutinas",
+                    valor = totalRutinas.toString()
                 )
+
                 StatCard(
                     modifier = Modifier.weight(1f),
-                    label = "Volumen (kg)",
-                    value = String.format("%.1f", volumenTotal),
-                    color = MaterialTheme.colorScheme.secondaryContainer
+                    titulo = "Volumen",
+                    valor = String.format("%.1f", volumenTotal)
                 )
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
-            OutlinedButton(
+            Button(
                 onClick = onCerrarSesion,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Icon(Icons.Default.ExitToApp, contentDescription = null)
+
+                Icon(Icons.Default.ExitToApp, null)
+
                 Spacer(modifier = Modifier.width(8.dp))
+
                 Text("Cerrar sesión")
             }
         }
     }
 }
 
+// =====================================================
+// COMPONENTES
+// =====================================================
+
 @Composable
-private fun InfoRow(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, value: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Icon(icon, contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.primary)
-        Spacer(modifier = Modifier.width(12.dp))
-        Column {
-            Text(text = label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(text = value, style = MaterialTheme.typography.bodyMedium)
-        }
+fun InfoItem(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    text: String
+) {
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        Icon(
+            imageVector = icon,
+            contentDescription = null
+        )
+
+        Spacer(modifier = Modifier.width(10.dp))
+
+        Text(text)
     }
 }
 
 @Composable
-private fun StatCard(modifier: Modifier, label: String, value: String, color: androidx.compose.ui.graphics.Color) {
+fun StatCard(
+    modifier: Modifier = Modifier,
+    titulo: String,
+    valor: String
+) {
+
     Card(
-        modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = color)
+        modifier = modifier
     ) {
+
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = value, style = MaterialTheme.typography.headlineMedium)
-            Text(text = label, style = MaterialTheme.typography.labelMedium)
+
+            Text(
+                text = valor,
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            Text(titulo)
         }
     }
 }

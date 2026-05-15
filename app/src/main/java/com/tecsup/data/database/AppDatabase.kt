@@ -10,7 +10,7 @@ import com.tecsup.data.entity.Usuario
 import com.tecsup.data.entity.Rutina
 
 
-@Database(entities = [Usuario::class, Rutina::class], version = 1, exportSchema = false)
+@Database(entities = [Usuario::class, Rutina::class], version = 4, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun usuarioDao(): UsuarioDao
@@ -26,7 +26,10 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "gymtracker_db"
-                ).build().also { INSTANCE = it }
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    .also { INSTANCE = it }
             }
         }
     }

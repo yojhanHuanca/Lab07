@@ -218,7 +218,8 @@ object RoutineScreens {
         usuarioId: Int,
         viewModel: RoutineViewModel,
         onIrDetalle: (Int) -> Unit,
-        onIrAgregar: () -> Unit
+        onIrAgregar: () -> Unit,
+        onVolver: () -> Unit
     ) {
         val rutinas by viewModel.rutinas.collectAsState()
         var rutinaAEliminar by remember { mutableStateOf<Rutina?>(null) }
@@ -256,7 +257,7 @@ object RoutineScreens {
                 TopAppBar(
                     title = { Text("Mis rutinas") },
                     navigationIcon = {
-                        IconButton(onClick = { /* ya hay FAB, opcional volver */ }) {
+                        IconButton(onClick = onVolver) {
                             Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
                         }
                     },

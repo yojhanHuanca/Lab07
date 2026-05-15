@@ -8,32 +8,80 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+class RoutineViewModel(
+    private val dao: RutinaDao
+) : ViewModel() {
 
-class RoutineViewModel(private val dao: RutinaDao) : ViewModel() {
+    private val _rutinas =
+        MutableStateFlow<List<Rutina>>(emptyList())
 
-    private val _rutinas = MutableStateFlow<List<Rutina>>(emptyList())
-    val rutinas: StateFlow<List<Rutina>> = _rutinas
+    val rutinas: StateFlow<List<Rutina>> =
+        _rutinas
 
-    private val _rutinaActual = MutableStateFlow<Rutina?>(null)
-    val rutinaActual: StateFlow<Rutina?> = _rutinaActual
+    private val _rutinaActual =
+        MutableStateFlow<Rutina?>(null)
+
+    val rutinaActual: StateFlow<Rutina?> =
+        _rutinaActual
 
     fun cargarRutinas(usuarioId: Int) {
-        viewModelScope.launch { _rutinas.value = dao.listarPorUsuario(usuarioId) }
+
+        viewModelScope.launch {
+
+            _rutinas.value =
+                dao.listarPorUsuario(usuarioId)
+        }
     }
 
     fun cargarRutinaPorId(id: Int) {
-        viewModelScope.launch { _rutinaActual.value = dao.buscarPorId(id) }
+
+        viewModelScope.launch {
+
+            _rutinaActual.value =
+                dao.buscarPorId(id)
+        }
     }
 
-    fun insertar(rutina: Rutina, onSuccess: () -> Unit) {
-        viewModelScope.launch { dao.insertar(rutina); onSuccess() }
+    fun insertar(
+        rutina: Rutina,
+        onSuccess: () -> Unit
+    ) {
+
+        viewModelScope.launch {
+
+            dao.insertar(rutina)
+
+            cargarRutinas(rutina.usuarioId)
+
+            onSuccess()
+        }
     }
 
-    fun actualizar(rutina: Rutina, onSuccess: () -> Unit) {
-        viewModelScope.launch { dao.actualizar(rutina); onSuccess() }
+    fun actualizar(
+        rutina: Rutina,
+        onSuccess: () -> Unit
+    ) {
+
+        viewModelScope.launch {
+
+            dao.actualizar(rutina)
+
+            cargarRutinas(rutina.usuarioId)
+
+            onSuccess()
+        }
     }
 
-    fun eliminar(rutina: Rutina, usuarioId: Int) {
-        viewModelScope.launch { dao.eliminar(rutina); cargarRutinas(usuarioId) }
+    fun eliminar(
+        rutina: Rutina,
+        usuarioId: Int
+    ) {
+
+        viewModelScope.launch {
+
+            dao.eliminar(rutina)
+
+            cargarRutinas(usuarioId)
+        }
     }
 }

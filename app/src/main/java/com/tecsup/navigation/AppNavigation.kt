@@ -58,8 +58,9 @@ fun AppNavigation(
                 onIrLista    = { navController.navigate(Screen.RoutineList.createRoute(usuarioId)) },
                 onIrPerfil   = { navController.navigate(Screen.Profile.createRoute(usuarioId)) },
                 onCerrarSesion = {
+                    usuarioVM.logout()
                     navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
+                        popUpTo(Screen.Home.route) { inclusive = true }
                     }
                 }
             )
@@ -88,7 +89,11 @@ fun AppNavigation(
                 onIrDetalle = { rutinaId ->
                     navController.navigate(Screen.RoutineDetail.createRoute(rutinaId, usuarioId))
                 },
-                onIrAgregar = { navController.navigate(Screen.AddRoutine.createRoute(usuarioId)) }
+                onIrAgregar = { navController.navigate(Screen.AddRoutine.createRoute(usuarioId)) },
+
+                onVolver = {
+                    navController.popBackStack()
+                }
             )
         }
 
@@ -119,8 +124,9 @@ fun AppNavigation(
                 usuarioId      = usuarioId,
                 viewModel      = usuarioVM,
                 onCerrarSesion = {
+                    usuarioVM.logout()
                     navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Login.route) { inclusive = true }
+                        popUpTo(Screen.Home.route) { inclusive = true }
                     }
                 }
             )
